@@ -2,7 +2,7 @@
 from flask import Flask, render_template, jsonify, request
 from flask_restful import Resource, Api
 from pymongo import MongoClient
-# from pymongo.collection import Collection
+from pymongo.collection import Collection
 from bson.son import SON
 
 app = Flask(__name__)
@@ -80,12 +80,15 @@ class Get(Resource):
         title = note['title']  # string
 
         # search for note in DB
-        todo_task = user_note.find({'Todolist': SON([('Title', title)])})
+        todo_task = user_note.find({'Todolist.Title': title})[0]['Todolist']
+        #todo_task = user_note.find({'Todolist': SON([('Title', title)])})
+        print(todo_task[0]['Title'])
 
         # Responce
         resp = {
             'status': 200,
-            'task': todo_task
+            'task title': f'{todo_task[0]["Title"]}',
+            'Task':f'{todo_task[0]["Tasks"]["Todo"]}'
         }
         return jsonify(resp)
 
@@ -108,13 +111,18 @@ class Update(Resource):
         updated_task_status = note['status']  # boolean
 
         # search for note in DB then update
-        user_note.find_one_and_update(
-            {'Todolist': SON([('Title', title)])},
-            {'$set': {
-                'Todolist.$[elem].Title': updated_title,
-                'Todolist.$[elem].Tasks': {'Todo': updated_todo},
-                'Todolist.$[elem].Tasks': {'Status': updated_task_status}
-            }}
+        user_note.create_index({'Title': 1 })
+        user_note.create_index({'Todo': 1})
+        user_note.update_many(
+                {'Todolist.Title': title},
+                {'$set': {
+                    'Todolist.$[elem].Title': updated_title#,
+                    #'Todolist.$[elem].Tasks': {'Todo': updated_todo},
+                    #'Todolist.$[elem].Tasks': {'Status': updated_task_status}
+                }}, {
+                    'upsert': True, 
+                    'arrayFilters' :[{'elem.Title': title}]
+                }
         )
 
         # Responce
@@ -140,7 +148,7 @@ class Delete(Resource):
         title = note['title']  # string
 
         # search for note in DB then deletes
-        user_note.find_one_and_delete({'Todolist': SON([('Title', title)])})
+        user_note.find_one_and_delete({'Todolist.Title': title})
 
         # Responce
         resp = {
