@@ -40,28 +40,53 @@ class Add(Resource):
         title = note['title']  # string
         todo = note['todo']  # string
         todo_status = note['status']  # boolean
-
-        # Store user input in DB
-        user_note.insert_one({
-            'Username': user,
-            'Todolist': [
-                SON([
-                    ('Title', title),
-                    ('Tasks',
-                        SON([
-                            ('Todo', todo),
-                            ('Status', todo_status)
-                        ])
-                    )
-                ])
-            ]
-        })
+        
+        query = {'Title': title}
 
         # Responce
-        resp = {
-            'status': 200,
-            'message': 'Note added'
-        }
+        #resp = {
+        #    'status': 404,
+        #    'message': 'No Title and Task in Todo list'
+        #}
+
+        if title is True and todo is True:
+            # try:
+                # todo_title = user_note.find(query)[0]['Title']
+                # print(todo_title)
+                # if title == todo_title:
+                #    user_note.update(
+                #        query, 
+                #        { '$push': {
+                #            'Tasks': {
+                #                'todo_task2': todo,
+                #                'task2_status': todo_status
+                #            }
+                #         }}
+                #     )
+                #     Responce
+                #     resp = {
+                #        'status': 201,
+                #        'message': f'Todo list with {title} updated'
+                #     }
+            # except :
+            #     print('Title not in DB')
+                # Store user input in DB
+                user_note.insert_one({
+                    'Username': user,
+                    'Title': title,
+                    'Tasks': [
+                        {
+                        'todo_task1':todo,
+                        'task1_status':todo_status
+                        }
+                    ]
+                })
+                # Responce
+                resp = {
+                    'status': 200,
+                    'message': 'Note added'
+                }
+
         return jsonify(resp)
 
 
@@ -80,18 +105,20 @@ class Get(Resource):
         title = note['title']  # string
 
         # search for note in DB
-        todo_task = user_note.find({'Todolist.Title': title})[0]['Todolist']
-        #todo_task = user_note.find({'Todolist': SON([('Title', title)])})
-        print(todo_task[0]['Title'])
+        try:
+            todo_task = user_note.find({'Todolist.Title': title})
 
-        # Responce
-        resp = {
-            'status': 200,
-            'task title': f'{todo_task[0]["Title"]}',
-            'Task':f'{todo_task[0]["Tasks"]["Todo"]}'
-        }
+            # Responce
+            resp = {
+                'status': 200,
+                'task title': f'{todo_task[0]["Todolist"]["Title"]}',
+                'Task':f'{todo_task[0]["Todolist"]["Tasks"][0]}'
+            }
+        
+        except :
+            print(f'No task with {title} in db')
+
         return jsonify(resp)
-
 
 class Update(Resource):
     """
@@ -111,18 +138,13 @@ class Update(Resource):
         updated_task_status = note['status']  # boolean
 
         # search for note in DB then update
-        user_note.create_index({'Title': 1 })
-        user_note.create_index({'Todo': 1})
         user_note.update_many(
-                {'Todolist.Title': title},
+                {'Title': title},
                 {'$set': {
-                    'Todolist.$[elem].Title': updated_title#,
-                    #'Todolist.$[elem].Tasks': {'Todo': updated_todo},
-                    #'Todolist.$[elem].Tasks': {'Status': updated_task_status}
-                }}, {
-                    'upsert': True, 
-                    'arrayFilters' :[{'elem.Title': title}]
-                }
+                    'Todolist.Title': updated_title,
+                    'Todolist.Tasks'[0]: updated_todo,
+                    'Todolist.Tasks'[1]: updated_task_status
+                }}
         )
 
         # Responce
