@@ -1,17 +1,6 @@
-# Statement for enabling the development environment
-DEBUG = True
-
 # Define the application directory
 import os
 BASE_DIR = os.path.abspath(os.path.dirname(__file__))  
-
-# Define the database - we are working with
-# Mongo DB
-from pymongo import MongoClient
-MONGO_DATABASE_URI = 'mongodb://127.0.0.1:27017'
-client = MongoClient()
-# SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
-DATABASE_CONNECT_OPTIONS = {host, port, document_class, tz_aware, connect}
 
 # Application threads. A common general assumption is
 # using 2 per available processor cores - to handle
@@ -26,4 +15,36 @@ CSRF_ENABLED     = True
 # signing the data. 
 CSRF_SESSION_KEY = "secret"
 
-# Secret
+class Config:
+    SECRET_KEY = os.getenv('SECRET_KEY', 'my_precious_secret_key')
+    DEBUG = False
+
+class DevelopmentConfig(Config):
+    DEBUG = True
+    HOST = 'localhost'
+    PORT = 5000
+    # Mongo DB options
+    DB_HOST='localhost'
+    DB_PORT=27017 
+    DOC_CLASS= dict 
+    TZ_AWARE=False 
+    CON= True
+
+class TestingConfig(Config):
+    DEBUG = True
+    HOST = 'localhost'
+    PORT = 5000
+    TESTING = True
+
+class ProductionConfig(Config):
+    DEBUG = False
+    HOST = '0.0.0.0'
+    PORT = 8080
+
+config_by_name = dict(
+    dev=DevelopmentConfig,
+    test=TestingConfig,
+    prod=ProductionConfig
+)
+
+key = Config.SECRET_KEY
