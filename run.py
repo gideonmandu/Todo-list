@@ -1,9 +1,5 @@
 from app import app
-from config import DevelopmentConfig
+from config import DevelopmentConfig as dev
 
 if __name__ == "__main__":
-    app.run(
-        debug=DevelopmentConfig.DEBUG, 
-        port=DevelopmentConfig.PORT, 
-        host=DevelopmentConfig.HOST
-        )
+    app.run(debug=dev.DEBUG, port=dev.PORT, host=dev.HOST)

@@ -1,5 +1,5 @@
 from app import Resource, request, jsonify
-from app.db import user_note
+from app.db import user_notes
 
 class Update(Resource):
     """
@@ -20,10 +20,10 @@ class Update(Resource):
 
         # search for note in DB then update
         try:
-            db_title = user_note.find({'Title': title})[0]['Title']
+            db_title = user_notes.find({'Title': title})[0]['Title']
 
             if title == db_title:
-                user_note.update_many(
+                user_notes.update_many(
                     {'Title': title},
                     {'$set': {
                         'Title': updated_title,

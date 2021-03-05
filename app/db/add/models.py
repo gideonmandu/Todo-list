@@ -1,5 +1,5 @@
 from app import Resource, request, jsonify
-from app.db import user_note
+from app.db import user_notes
 
 class Add(Resource):
     """
@@ -20,37 +20,13 @@ class Add(Resource):
         
         query = {'Title': title}
 
-        # user_note.insert_one({
-        #             'Username': user,
-        #             'Title': title,
-        #             'Tasks': [
-        #                 {
-        #                 'todo_task1':todo,
-        #                 'task1_status':todo_status
-        #                 }
-        #             ]
-        #         })
-        # # Responce
-        # resp = {
-        #     'status': 200,
-        #     'message': 'Note added'
-        # }
-        #todo_title = user_note.find(query)[0]['Title']
-		#IndexError: no such item for Cursor instance
-        #todo_title = user_note.find({'Title':'lost'})[0]
-        #print(todo_title)
-        #resp = {
-        #    'status': 200,
-        #    'message': 'in db'
-        #}
-
         if title is True and todo is True:
             try:
-                todo_title = user_note.find(query)[0]['Title']
+                todo_title = user_notes.find(query)[0]['Title']
                 print(todo_title)
                 if title == todo_title:
-                    task_no = user_note.find(query)[0]['Number'] + 1;
-                    user_note.update(
+                    task_no = user_notes.find(query)[0]['Number'] + 1;
+                    user_notes.update(
                         query, 
                         {{ 
                             '$inc': {'Number': 1} ,
@@ -64,16 +40,17 @@ class Add(Resource):
                     )
                     #  Responce
                     resp = {
-                        'status': 201,
+                        'status': 202,#accepted
                         'message': f'New task added to {title}.'
                     }
             except IndexError as err:
                 print(f'{title} not in DB \nerror: {err}')
                 # Store user input in DB
-                user_note.insert_one({
+                user_notes.insert_one({
                     'Userid': user,
                     'Title': title,
                     'Number': 1,
+                    'Created': ,
                     'Tasks': [
                         {
                         'todo_task1':todo,
@@ -83,14 +60,14 @@ class Add(Resource):
                 })
                 # Responce
                 resp = {
-                    'status': 200,
+                    'status': 200, #ok
                     'message': 'Note added'
                 }
         else:
             # Responce
             resp = {
-                'status': 404,
-                'error msg': 'No Title and Task in Todo list'
+                'status': 406, #Not acceptable
+                'error msg': 'Not acceptable'
             }
 
         return jsonify(resp)

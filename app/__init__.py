@@ -5,24 +5,27 @@ from flask import Flask, render_template, jsonify, request
 # Import API
 from flask_restful import Api, Resource
 
+# Configurations
+from config import config_by_name
+
 # Define the WSGI application object
 app = Flask(__name__)
 api = Api(app)
 
-# Configurations
-from config import DevelopmentConfig as dev
-app.config.from_object('DevelopmentConfig')
-
 # Define the database options which is imported
 # by modules and controllers
 from pymongo import MongoClient
-client = MongoClient(
-    host= dev.DB_HOST, 
-    port= dev.DB_PORT,
-    document_class= dev.DOC_CLASS,
-    tz_aware=dev.TZ_AWARE,
-    connect=dev.CON
+def db_init(name):
+    client = MongoClient(
+    host= config_by_name[name].DB_HOST, 
+    port= config_by_name[name].DB_PORT,
+    document_class= config_by_name[name].DOC_CLASS,
+    tz_aware=config_by_name[name].TZ_AWARE,
+    connect=config_by_name[name].CON
     )
+    return client
+
+client = db_init('dev')
 
 # Sample HTTP error handling
 @app.errorhandler(404)

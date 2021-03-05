@@ -1,32 +1,31 @@
 from app import Resource, request, jsonify
-from app.db import user_note
+from app.db import user_notes
 
-class Get(Resource):
+class Delete(Resource):
     """
-    User Obtains to-do note
+    User Deletes to-do note
     """
 
     def post(self):
         """
-        Gets user tasks
+        Delete user task
         """
         # Get user input
         note = request.get_json()
 
         title = note['title']  # string
+        todo = note['todo']  # string
 
-        # search for note in DB
+        # search for note in DB then deletes
         try:
-            todo_task = user_note.find({'Title': title})
+            user_notes.find_one_and_delete({'Title': title}, {'Tasks':''})
 
             # Responce
             resp = {
+                # ideally use if request.status_code==200
                 'status': 200,
-                'task title': f'{todo_task[0]["Title"]}',
-                'Task':f'{todo_task[0]["Tasks"][0]["todo_task1"]}'
+                'message': f'Task {todo} in {title} deleted!!!'
             }
-
-
         except IndexError:
             print(f'No task with {title} in db')
             # Responce
@@ -34,5 +33,5 @@ class Get(Resource):
                 'status': 404,
                 'error msg': f'No task with {title} in db'
             }
-
+        
         return jsonify(resp)

@@ -1,7 +1,7 @@
-from pymongo.collection import Collection
-from bson.son import SON
-
 from app import db
 
-user_note = db['todo_notes']
+user_notes = db['todo_notes']
+users = db['users']
 
+from pymongo.collection import Collection
+from bson.son import SON

@@ -21,10 +21,10 @@ class Config:
 
 class DevelopmentConfig(Config):
     DEBUG = True
-    HOST = 'localhost'
+    HOST = 'http://127.0.0.1'
     PORT = 5000
     # Mongo DB options
-    DB_HOST='localhost'
+    DB_HOST='http://127.0.0.1'
     DB_PORT=27017 
     DOC_CLASS= dict 
     TZ_AWARE=False 
@@ -32,7 +32,7 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     DEBUG = True
-    HOST = 'localhost'
+    HOST = 'http://127.0.0.1'
     PORT = 5000
     TESTING = True
 
