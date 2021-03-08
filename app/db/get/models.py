@@ -1,5 +1,9 @@
-from app import Resource, request, jsonify
-from app.db import user_notes
+from flask import request
+from flask import jsonify
+from flask_restful import Resource
+
+from ..database import init_db
+tasks = init_db('user_tasks')
 
 class Get(Resource):
     """
@@ -17,13 +21,13 @@ class Get(Resource):
 
         # search for note in DB
         try:
-            todo_task = user_notes.find({'Title': title})
+            db_tasks = tasks.find({'Title': title})
 
             # Responce
             resp = {
                 'status': 200,
-                'task title': f'{todo_task[0]["Title"]}',
-                'Task':f'{todo_task[0]["Tasks"][0]["todo_task1"]}'
+                'task title': f'{db_tasks[0]["Title"]}',
+                'Task':f'{db_tasks[0]["Tasks"][0]["task_1"]}'
             }
 
 

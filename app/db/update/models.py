@@ -1,5 +1,9 @@
-from app import Resource, request, jsonify
-from app.db import user_notes
+from flask import request
+from flask import jsonify
+from flask_restful import Resource
+
+from ..database import init_db
+tasks = init_db('user_tasks')
 
 class Update(Resource):
     """
@@ -15,19 +19,19 @@ class Update(Resource):
 
         title = note['title']
         updated_title = note['new title']
-        updated_todo = note['todo']  # string
+        updated_task = note['task']  # string
         updated_task_status = note['status']  # boolean
 
         # search for note in DB then update
         try:
-            db_title = user_notes.find({'Title': title})[0]['Title']
+            db_title = tasks.find({'Title': title})[0]['Title']
 
             if title == db_title:
-                user_notes.update_many(
+                tasks.update_many(
                     {'Title': title},
                     {'$set': {
                         'Title': updated_title,
-                        'Tasks.$[elem].todo_task1': updated_todo,
+                        'Tasks.$[elem].task_1': updated_todo,
                         'Tasks.$[elem].task1_status': updated_task_status
                     }, #{array_filters=}
                     }

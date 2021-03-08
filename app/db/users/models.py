@@ -1,6 +1,11 @@
-from app import Resource, request, jsonify
-from app.db import users
-import bcrypt
+from flask import request
+from flask import jsonify
+from flask_restful import Resource
+from werkzeug.security import check_password_hash
+from werkzeug.security import generate_password_hash
+
+from ..database import init_db
+users = init_db('users')
 
 def process_data(posted_data):
     """
@@ -11,12 +16,12 @@ def process_data(posted_data):
     passwd = posted_data['password']
 
     # creating password level security
-    hashed_pw = bcrypt.hashpw(passwd.encode('utf8'), bcrypt.getsalt())
+    hashed_pw = generate_password_hash(passwd.encode('utf8'))
     return [username, email, hashed_pw]
 
 def verify_pw(email, passwd):
     hashed_pw = users.find({'Email': email})[0]['Password']
-    if bcrypt.hashpw(passwd.encode('utf8'), hashed_pw) == hashed_pw:
+    if check_password_hash(hashed_pw, passwd.encode('utf8')):
         return True
     else:
         return False

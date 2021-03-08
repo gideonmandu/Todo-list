@@ -24,7 +24,7 @@ class DevelopmentConfig(Config):
     HOST = 'http://127.0.0.1'
     PORT = 5000
     # Mongo DB options
-    DB_HOST='http://127.0.0.1'
+    DB_HOST='mongodb://127.0.0.1'
     DB_PORT=27017 
     DOC_CLASS= dict 
     TZ_AWARE=False 

@@ -1,5 +1,9 @@
-from app import Resource, request, jsonify
-from app.db import user_notes
+from flask import request
+from flask import jsonify
+from flask_restful import Resource
+
+from ..database import init_db
+tasks = init_db('user_tasks')
 
 class Delete(Resource):
     """
@@ -14,17 +18,17 @@ class Delete(Resource):
         note = request.get_json()
 
         title = note['title']  # string
-        todo = note['todo']  # string
+        task = note['task']  # string
 
         # search for note in DB then deletes
         try:
-            user_notes.find_one_and_delete({'Title': title}, {'Tasks':''})
+            tasks.find_one_and_delete({'Title': title}, {'Tasks':''})
 
             # Responce
             resp = {
                 # ideally use if request.status_code==200
                 'status': 200,
-                'message': f'Task {todo} in {title} deleted!!!'
+                'message': f'Task {task} in {title} deleted!!!'
             }
         except IndexError:
             print(f'No task with {title} in db')
