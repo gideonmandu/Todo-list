@@ -12,15 +12,14 @@ def process_data(posted_data):
     gets individual data from json 
     """
     username = posted_data['username']
-    email = posted_data['email']
     passwd = posted_data['password']
 
     # creating password level security
     hashed_pw = generate_password_hash(passwd.encode('utf8'))
-    return [username, email, hashed_pw]
+    return [username, hashed_pw]
 
-def verify_pw(email, passwd):
-    hashed_pw = users.find({'Email': email})[0]['Password']
+def verify_pw(username, passwd):
+    hashed_pw = users.find({'Username': username})[0]['Password']
     if check_password_hash(hashed_pw, passwd.encode('utf8')):
         return True
     else:
@@ -32,33 +31,54 @@ def user_task_ids(username):
 
 class Signup(Resource):
     def post(self):
-        # Get posted data from user
-        posted_data = request.get_json()
         # Get data
-        user = process_data(posted_data)
-        # Store username and pw in db
-        users.insert_one({
-            'Username': user[0],
-            'Email': user[1],
-            'Password': user[2],
-            'Task_Title_Ids': []
-        })
+        if request.method == 'POST':
+            # Get posted data from user
+            # posted_data = request.get_json()
+            # print(request.form('username'))
+            # user_n = request.form('username')
+            # passwd = request.form('password')
+            # req = {
+            #     'username': user_n,
+            #     'password': passwd
+            # }
+            # user = process_data(req)
+            # # Store username and pw in db
+            # users.insert_one({
+            #     'Username': user[0],
+            #     'Password': user[1],
+            #     'Task_Title_Ids': []
+            # })
 
-        ret_json = {
-            'status': 200,
-            'message':'You successfully signed up.'
-        }
-        return jsonify(ret_json)
+            ret_json = {
+                'status': 200,
+                'message':'You successfully signed up.'
+            }
+        else:
+            ret_json = {
+                'status': 406,
+                'message': 'could not access database'
+            }
+        # return jsonify(ret_json)
 
 class Signin(Resource):
     def post(self):
         # Get posted data from user
-        posted_data = request.get_json()
+        if request.method == 'POST':
+            user_n = request.form('username')
+            # email= request.form('email')
+            passwd = request.form('password')
+            req = {
+                'username': user_n,
+                # 'email': email,
+                'password': passwd
+            }
+        # posted_data = request.get_json()
         # Get data
-        user = process_data(posted_data)
+        # user = process_data(posted_data)
 
         # Verify user
-        correct_pw = verify_pw(user[1], user[2])
+        correct_pw = verify_pw(user_n, passwd)
 
         if not correct_pw:
             ret_json = {
