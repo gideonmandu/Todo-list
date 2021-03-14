@@ -1,0 +1,6 @@
+include LICENSE
+include todolist/schema.sql
+graft todolist/static
+graft todolist/templates
+graft tests
+global-exclude *.pyc

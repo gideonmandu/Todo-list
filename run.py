@@ -1,5 +1,5 @@
-from app import app
-from config import DevelopmentConfig as dev
+from todolist import create_app
+app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=dev.DEBUG, port=dev.PORT, host=dev.HOST)
+    app.run()

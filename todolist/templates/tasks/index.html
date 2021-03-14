@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block header %}
+<h1>{% block title %}Tasks{% endblock %}</h1>
+{% if g.user %}
+<a href="{{ url_for('tasks.create') }}">New</a>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+    {% for task in tasks %}
+        <article class="post">
+            <header>
+                <div>
+                    <h1>{{ task['title'] }}</h1>
+                    <div class="about">
+                        by {{ task['username'] }} on {{ task['created'].strftime('%Y-%m-%d') }}
+                    </div>
+                </div>
+                {% if g.user['id'] == task['author_id'] %}
+                <a class="action" href="{{ url_for('tasks.update', id=task['id']) }}">Edit</a>
+                {% endif %}
+            </header>
+            <p class="task">{{ task['task'] }}</p>
+        </article>
+        <!-- loop.last is a special variable available inside Jinja
+for loops. It’s used to display a line after each task except the last one, to visually separate them -->
+        {% if not loop.last %}
+        <hr>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
