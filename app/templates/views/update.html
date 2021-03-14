@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block header %}Update Task{% endblock %}
+{% block content%}
+<form class="row g-3" method="post">
+    <div class="col-md-6">
+        <label for="title" class="form-label">Title</label>
+        <input type="text" class="form-control" name="title" id="title" value="{{ request.values.get('title') or db_task['Title'] }}">
+    </div>
+    <div class="col-md-6">
+        <label for="task" class="form-label">Task</label>
+        <input type="text" class="form-control" name="task" id="task" value="{{ request.values.get('task') or db_task['Tasks'][0]['Task'] }}">
+    </div>
+    <div class="col-12">
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="gridCheck">
+            <label class="form-check-label" for="gridCheck">
+                Done
+            </label>
+        </div>
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-success">Update</button>
+    </div>
+</form>
+    <!-- <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <form class="d-flex">
+                <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success" type="submit">Search</button>
+            </form>
+        </div>
+    </nav> -->
+{% endblock %}
