@@ -1,48 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    {% block head %}
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>{% block title %}Home{% endblock %}-Todo app</title>
-    {% endblock %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <title>{% block title %}Todo app {% endblock %}</title>
 </head>
+
 <body>
-    <header>
-        <nav>
-            <h1><a href="{{ url_for('tasks.home') }}">Todo Home</a></h1>
-            <ul>
-                {% if g.user %}
-                <li><span>{{ g.user['username'] }}</span></li>
-                <li><a href="{{ url_for('auth.signout') }}">Sign Out</a></li>
-                {% else %}
-                <li><a href="{{ url_for(auth.signup) }}">Sign Up</a></li>
-                <li><a href="{{ url_for(auth.signin) }}">Sign In</a></li>
-                {% endif %}
-            </ul>
-        </nav>
-        <h1>
-            {% block header %}Todo App{% endblock %}
-        </h1>
-        {% for message in get_flashed_messages() %}
-            <div class="flash">
-                {{ message }}
+    <header class="container">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ url_for('index') }}">TodoApp</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                    <ul class="navbar-nav">
+                        {% if g.user %}
+                        <li class="nav-item">{{ g.user['username'] }}
+                            <a class="nav-link" href="#"></a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('.create') }}">Add Task</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.signout') }}">Sign Out</a>
+                        </li>
+                        {% else %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.signin') }}">Sign In</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('auth.signup') }}">Sign Up</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
             </div>
+        </nav>
+        <div class="row">
+            {% block header %}Home{% endblock %}
+        </div>
+        {% for message in get_flashed_messages() %}
+        <div class="alert alert-warning" role="alert">
+            {{ message }}
+        </div>
         {% endfor %}
     </header>
-
     <section class="container">
-        {% block content %}{% endblock %}
-    </section>
-    
-    <footer>
         <div>
+            {% block content %}{% endblock %}
+        </div>
+    </section>
+    <footer class="container">
+        <div class="row">
             {% block footer %}
-                &copy; Copyright 2021 by <a href="{{ url_for('tasks.home') }}">Gideon Mandu</a>.
+            <div>
+                <div style="text-align:right;padding:1em 0;">
+                    <h4>
+                        <p style="margin-right: 1.25em;">
+                            <span style="color:gray;">
+                                Current time
+                            </span>
+                        </p>
+                    </h4>
+                    <iframe
+                        src="https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=small&timezone=Africa%2FNairobi"
+                        width="19%" height="82" frameborder="0" seamless></iframe>
+                </div>
+            </div>
+            <div>
+                <p>
+                    &copy; Copyright 2021 by
+                    <a href="{{ url_for('index') }}">Gideon Mandu</a>.
+                </p>
+            </div>
             {% endblock %}
         </div>
     </footer>
 </body>
+
 </html>

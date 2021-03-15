@@ -1,0 +1,48 @@
+{% extends 'base.html' %} {% block header %} {% if user %}
+<p>{{ 'Signed in as ' + user }}</p>
+{% else %} {{ '' }} {% endif %} {% endblock %} {% block content %}
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">Title</th>
+            <th scope="col">Tasks</th>
+            <th scope="col">Date Created</th>
+            <th scope="col">Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if disp_tasks %}
+            {% for task in disp_tasks %}
+            <tr>
+                <td value="title">{{ task['Title'] }}</td>
+                <td value="task">{{ task['Tasks'][0]['Task'] }}</td>
+                <td value="created">{{ task['Tasks'][0]['Created'].date() }}</td>
+                <td value="status">
+                    {% if task['Tasks'][0]['Status'] != True %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="no" id="status" name="status" value="False"/>
+                        <label class="form-check-label" for="status"> Incomplete </label>
+                    </div>
+                    {% else %}
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="yes" id="status" name="status" value="True" checked />
+                        <label class="form-check-label" for="status"> Completed </label>
+                    </div>
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ url_for('.update', id=task['_id']) }}"><button type="submit"
+                            class="btn btn-warning">Update</button></a>
+                    <a href="{{ url_for('.delete', id=task['_id']) }}">
+                        <button type="button" class="btn btn-danger">Delete</button></a>
+                </td>
+            </tr>
+            {% endfor %} 
+        {% else %}
+        <tr>
+            <td>No tasks to keep you Grinding. Add some!!!</td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,31 +1,41 @@
-"""Start with that one in Flask, then we'll got through it. User should be able to Add new to-do note, delete note, update note. Also user should be able to mark note as complete"""
+#!/usr/bin/python3
 
-from flask import Flask, render_template, jsonify, request
-# Import API
-from flask_restful import Api, Resource
+from flask import Flask
+import os
+print("give me a bottle of rum!")
 
-# Configurations
-from config import config_by_name
 
-# Define the WSGI application object
-app = Flask(__name__)
-api = Api(app=app)
+def create_app(test_config=None):
+    """Create and configure an instance of the Flask application."""
+    app = Flask(__name__, instance_relative_config=True)
+    app.config.from_mapping(
+        # a default secret that should be overridden by instance config
+        SECRET_KEY="dev"
+    )
 
-# Sample HTTP error handling
-@app.errorhandler(404)
-def not_found(error):
-    return render_template('404.html'), 404
+    if test_config is None:
+        # load the instance config, if it exists, when not testing
+        app.config.from_pyfile("config.py", silent=True)
+    else:
+        # load the test config if passed in
+        app.config.update(test_config)
 
-# Import a module / component using its blueprint handler variable (mod_auth)
-from .auth.controllers import  bp as auth_module
-from .views.controllers import bp as tasks_module
+    # ensure the instance folder exists
+    try:
+        os.makedirs(app.instance_path)
+    except OSError:
+        pass
 
-# Register blueprint(s)
-app.register_blueprint(auth_module)
-app.register_blueprint(tasks_module)
+    # apply the blueprints to the app
+    from app import auth, views
 
-# make url_for('home') == url_for('tasks.home')
-# in another app, you might define a separate main index here with
-# app.route, while giving the tasks blueprint a url_prefix, but for
-# the tutorial the blog will be the main index
-app.add_url_rule("/", endpoint="home")
+    app.register_blueprint(auth.bp)
+    app.register_blueprint(views.bp)
+
+    # make url_for('index') == url_for('tasks.index')
+    # in another app, you might define a separate main index here with
+    # app.route, while giving the tasks blueprint a url_prefix, but for
+    # the tutorial the tasks will be the main index
+    app.add_url_rule("/", endpoint="index")
+
+    return app
