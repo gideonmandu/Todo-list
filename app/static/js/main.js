@@ -13,18 +13,18 @@ $(document).ready(function () {
 });
 
 
-$('#myform :checkbox').change(function () {
-    if ($(this).is(':checked')) {
-        console.log($(this).val() + ' is now checked');
-    } else {
-        console.log($(this).val() + ' is now unchecked');
-    }
-});
+// $('#myform :checkbox').change(function () {
+//     if ($(this).is(':checked')) {
+//         console.log($(this).val() + ' is now checked');
+//     } else {
+//         console.log($(this).val() + ' is now unchecked');
+//     }
+// });
 
-$('#myform').on('change', ':checkbox', function () {
-    if ($(this).is(':checked')) {
-        console.log($(this).val() + ' is now checked');
-    } else {
-        console.log($(this).val() + ' is now unchecked');
-    }
-});
+// $('#myform').on('change', ':checkbox', function () {
+//     if ($(this).is(':checked')) {
+//         console.log($(this).val() + ' is now checked');
+//     } else {
+//         console.log($(this).val() + ' is now unchecked');
+//     }
+// });
