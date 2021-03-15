@@ -1,10 +1,8 @@
 #!/usr/bin/python3
 
-print("give me a bottle of rum!")
-
-import os
-
 from flask import Flask
+import os
+print("give me a bottle of rum!")
 
 
 def create_app(test_config=None):

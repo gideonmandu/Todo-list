@@ -6,7 +6,9 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='vendor/css/bootstrap.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/jquery-3.6.0.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     <title>{% block title %}Todo app {% endblock %}</title>
 </head>
 
@@ -60,7 +62,28 @@
     </section>
     <footer class="container">
         <div class="row">
-            {% block footer %}&copy; Copyright 2021 by <a href="{{ url_for('index') }}">Gideon Mandu</a>.{% endblock %}
+            {% block footer %}
+            <div>
+                <div style="text-align:right;padding:1em 0;">
+                    <h4>
+                        <p style="margin-right: 1.25em;">
+                            <span style="color:gray;">
+                                Current time
+                            </span>
+                        </p>
+                    </h4>
+                    <iframe
+                        src="https://www.zeitverschiebung.net/clock-widget-iframe-v2?language=en&size=small&timezone=Africa%2FNairobi"
+                        width="19%" height="82" frameborder="0" seamless></iframe>
+                </div>
+            </div>
+            <div>
+                <p>
+                    &copy; Copyright 2021 by
+                    <a href="{{ url_for('index') }}">Gideon Mandu</a>.
+                </p>
+            </div>
+            {% endblock %}
         </div>
     </footer>
 </body>
