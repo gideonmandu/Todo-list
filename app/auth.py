@@ -7,8 +7,9 @@ from flask import Blueprint
 from flask import flash
 from flask import session
 from flask import g
-from werkzeug.security import check_password_hash
-from werkzeug.security import generate_password_hash
+# from werkzeug.security import check_password_hash
+# from werkzeug.security import generate_password_hash
+import bcrypt
 
 from .db import users
 
@@ -41,7 +42,7 @@ def load_logged_in_user():
 def signup():
     if request.method == 'POST':
         username = request.form['username']
-        passwd = request.form['password']
+        passwd = b"{request.form['password']}"
 
         if username is None:
             error = 'Please input Username'
@@ -52,7 +53,8 @@ def signup():
             return redirect(url_for('auth.signup'))
 
         elif users.find_one({'Username': username}) is None:
-            hashed_pw = generate_password_hash(passwd.encode('utf8'))
+            # hashed_pw = generate_password_hash(passwd.encode('utf8'))
+            hashed_pw = bcrypt.hashpw(passwd, bcrypt.gensalt())
 
             users.insert_one({
                 'Username': username,
@@ -74,7 +76,7 @@ def signup():
 def signin():
     if request.method == 'POST':
         username = request.form['username']
-        passwd = request.form['password']
+        passwd = b"{request.form['password']}"
 
         if username is None:
             error = 'Please input Username'
@@ -93,7 +95,8 @@ def signin():
             # print(user)
             db_passwd = user['Password']
 
-            if check_password_hash(db_passwd, passwd.encode('utf8')):
+            # if check_password_hash(db_passwd, passwd.encode('utf8')):
+            if bcrypt.checkpw(passwd, db_passwd):
                 error = f'User {username} logged In'
                 session.clear()
                 session['user_id'] = user['Username']
