@@ -116,6 +116,10 @@ def update(id):
         else:
             # task = request.values.get["task"]
             task = request.form['task']
+            radio = request.values.get('status')
+            #If radio is 'True' status is True
+            status = radio == 'True'
+            print(status)
             tasks.update(
                 query,
                 {
@@ -124,7 +128,7 @@ def update(id):
                         'Tasks': [
                             {
                                 'Task': task,
-                                'Status': False,
+                                'Status': status,
                                 'Updated': datetime.utcnow(),
                                 'Created': cd
                             }
